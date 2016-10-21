@@ -1,0 +1,26 @@
+#!/bin/bash
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m'
+# add ip / hostname separated by white space
+HOSTS="github.com google.com"
+# number of ping requests
+COUNT=1
+for myHost in $HOSTS
+do
+	if ping_output=$(ping -c $COUNT $myHost 2>&1); then
+		if count=$(echo $ping_output | grep 'received' | awk -F',' '{ print $2  }' | awk '{ print $1  }'); then
+			if [ $count -eq 0  ]; then
+				# 100% failed
+				echo -e "${RED}$myHost is down at $(date +'%D %R')${NC}"
+			else
+				echo -e "${GREEN}$myHost is up${NC}"
+			fi
+		else
+			echo -e "${RED}$myHost is down at $(date +'%D %R')${NC}"
+		fi
+	else
+		echo -e "${RED}$myHost is down at $(date +'%D %R')${NC}"
+	fi
+done
